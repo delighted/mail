@@ -339,9 +339,17 @@ describe Mail::Message do
     end
 
     it "should parse non-UTF8 sources" do
+<<<<<<< HEAD
       mail = Mail.read(fixture('emails', 'multi_charset', 'japanese_shiftjis.eml'))
       mail.to.should eq ["raasdnil@gmail.com"]
       mail.decoded.should eq "すみません。\n\n"
+=======
+      raw_message = File.read(fixture('emails', 'multi_charset', 'japanese_shiftjis.eml'))
+      mail = Mail.new(raw_message)
+      expect(mail.to).to eq ["raasdnil@gmail.com"]
+      expect(mail.decoded).to eq "すみません。\n\n".encode("ISO-2022-JP")
+      expect(mail.decoded.encoding.name).to eq "ISO-2022-JP" if mail.decoded.respond_to?(:encoding)
+>>>>>>> a2ff803... when decoding a message under Ruby 1.9+, set the string encoding from the charset
     end
   end
 
@@ -1314,7 +1322,7 @@ describe Mail::Message do
     end
 
     it "should be decoded using content type charset" do
-      @message.decoded.should eq "América"
+      @message.decoded.should eq "América".encode("ISO-8859-1")
     end
 
     it "should respond true to text?" do
